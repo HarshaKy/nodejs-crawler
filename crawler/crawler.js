@@ -1,5 +1,6 @@
 const request = require('request')
 const cheerio = require('cheerio')
+const { saveUrl } = require('../middleware/saveUrl')
 
 let urlsToCrawl = []
 let crawlCount = 0
@@ -32,7 +33,7 @@ const crawl = () => {
             for (let url of uniqueUrls) {
                 if (urlsToCrawl.indexOf(url) === -1 && isURL(url)) {
                     urlsToCrawl.push(url)
-                    console.log(url)
+                    // console.log(url)
                 }
             }
             while (urlsToCrawl.length && crawlCount < crawlLimit) {
@@ -48,10 +49,14 @@ const crawl = () => {
 function removeDuplicates(arr) {
     var uniqueLinks = []
 
-    arr.forEach(element => {
+    arr.forEach(async element => {
         if (allUrls.indexOf(element) === -1) {
-            uniqueLinks.push(element)
-            allUrls.push(element)
+            if(isURL(element)) {
+                uniqueLinks.push(element)
+                allUrls.push(element)
+                let res = await saveUrl(element)
+            }
+            
         }
     })
 
